@@ -1,7 +1,9 @@
 import React from "react";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-
+import favImage from '../assets/images/fav.png'
+import generate from '../assets/images/generate.png'
+import meal from '../assets/images/meal.png'
 import {
   Card,
   CardActionArea,
@@ -10,7 +12,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-export default function HomeScreen() {
+export default function HomeScreen({setActiveState,refresh,setrefresh}) {
   return (
     <div>
       {" "}
@@ -18,18 +20,23 @@ export default function HomeScreen() {
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Grid container spacing={3}>
           {/* Chart */}
-          <Grid item xs={12} md={4} lg={4}>
+          
+          <Grid item xs={12} md={4} lg={4} onClick={()=>setActiveState("Menu")}>
             <Card>
               <CardActionArea>
                 <CardMedia
                   component="img"
-                  height="140"
-                  image="https://cdn.airfuture.com/img/bg/JFK_1.jpg"
+                  className="shadow-img "
+
+                  image={meal}
                   alt="green iguana"
+                  sx={{objectFit:"contain"}}
+                  height="200"
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    Menu
+                  <Typography gutterBottom variant="h5" component="div"   >
+                    
+                    <span className="headingCard"> Menu </span> 
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     A collection of my most-loved recipes, carefully curated to
@@ -42,42 +49,47 @@ export default function HomeScreen() {
             </Card>
           </Grid>
           {/* Recent Deposits */}
-          <Grid item xs={12} md={4} lg={4}>
+          <Grid item xs={12} md={4} lg={4}onClick={()=>setActiveState("My Favourites")}>
             <Card>
               <CardActionArea>
                 <CardMedia
                   component="img"
-                  height="140"
-                  image="https://cdn.airfuture.com/img/bg/JFK_1.jpg"
+                  className="shadow-img "
+                  image={favImage}
                   alt="green iguana"
+                  sx={{objectFit:"contain"}}
+                  height="200"
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    My Favourites
+                  <Typography gutterBottom variant="h5" component="div" >
+                    
+                    <span className="headingCard">My Favourites </span> 
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    menu featuring my most trusted and beloved recipes, refined
+                  Each dish is a guarantee of deliciousness and
+                    satisfaction.  My most trusted and beloved recipes, refined
                     through years of experimentation and feedback from friends
-                    and family. Each dish is a guarantee of deliciousness and
-                    satisfaction.
+                    and family. 
                   </Typography>
                 </CardContent>
               </CardActionArea>
             </Card>
           </Grid>
           {/* Recent Orders */}
-          <Grid item xs={12} md={4} lg={4}>
+          <Grid item xs={12} md={4} lg={4} onClick={()=>setActiveState("Meal Generator")}>
             <Card>
               <CardActionArea>
                 <CardMedia
                   component="img"
-                  height="140"
-                  image="https://cdn.airfuture.com/img/bg/JFK_1.jpg"
+                  className="shadow-img "
+                  image={generate}
                   alt="green iguana"
+                  sx={{objectFit:"contain"}}
+                  height="200"
                 />
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    Meal Generator
+                  <Typography gutterBottom variant="h5" component="div"  >
+                   <span className="headingCard">Meal Generator </span> 
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     The Meal Generator is a tool that creates a custom meal plan

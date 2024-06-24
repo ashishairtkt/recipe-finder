@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect, memo } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
@@ -12,24 +12,50 @@ import {
   Container,
   Box,
   ListItemSecondaryAction,
+  Skeleton,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import MealsData from "../meals.json";
+import { fetchMealsByCategory } from "../services/mealService";
+import { useFavorites } from "../context/FavoritesContext";
+import AlertSnackbar from "../utils/AlertSnackbar";
 
-export default function MealList() {
-  const [favorites, setFavorites] = React.useState({});
+const MealList = ({ CategoryByName }) => {
+  const [meals, setMeals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { state, dispatch } = useFavorites();
+  const [open, setOpen] = useState(false);
+const [alertMessage, setAlertMessage] = useState('');
+  useEffect(() => {
+    const getMeals = async () => {
+      try {
+        setLoading(true);
+        const meals = await fetchMealsByCategory(CategoryByName);
+        setMeals(meals);
+      } catch (error) {
+        console.error("Error fetching meals:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleFavoriteToggle = (id) => {
-    setFavorites((prevFavorites) => ({
-      ...prevFavorites,
-      [id]: !prevFavorites[id],
-    }));
+    getMeals();
+  }, [CategoryByName]);
+
+  const handleFavoriteToggle = (item) => {
+    const isFav = isFavorite(item);
+    dispatch({ type: "TOGGLE_FAVORITE", payload: item });
+    setAlertMessage(`${item.strMeal} ${isFav ? 'removed from' : 'added to'} favorites`);
+    setOpen(true);
+  };
+
+  const isFavorite = (item) => {
+    return state.favorites.some(fav => fav.idMeal === item.idMeal);
   };
 
   return (
     <>
-      <Toolbar />
+    
       <Container>
         <Box
           sx={{
@@ -37,46 +63,52 @@ export default function MealList() {
             borderRadius: 2,
             boxShadow: 3,
             padding: 2,
-            marginTop: 2,
+            marginTop: 4,
           }}
         >
           <Typography variant="h6" component="div" sx={{ marginBottom: 2 }}>
-            Meal Plans
+          <span className="headingCard">  {CategoryByName}  </span> 
+           
           </Typography>
-          <List
-            sx={{
-              width: "100%",
-              bgcolor: "background.paper",
-            }}
-          >
-            {MealsData &&
-              MealsData.meals.map((item, index) => (
+          <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+            {loading ? (
+              Array.from(new Array(5)).map((_, index) => (
+                <React.Fragment key={index}>
+                  <ListItem alignItems="center">
+                    <ListItemAvatar>
+                      <Skeleton variant="circular" width={56} height={56} />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={<Skeleton variant="text" width="80%" />}
+                    />
+                    <ListItemSecondaryAction>
+                      <Skeleton variant="circular" width={40} height={40} />
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                  {index < 4 && <Divider variant="inset" component="li" />}
+                </React.Fragment>
+              ))
+            ) : (
+              meals.map((item, index) => (
                 <React.Fragment key={item.idMeal}>
                   <ListItem alignItems="center">
                     <ListItemAvatar>
                       <Avatar
                         alt={item.strMeal}
                         src={item.strMealThumb}
-                        sx={{
-                          width: 56,
-                          height: 56,
-                          marginRight: 2,
-                        }}
+                        sx={{ width: 56, height: 56, marginRight: 2 }}
                       />
                     </ListItemAvatar>
                     <ListItemText
                       primary={item.strMeal}
-                      primaryTypographyProps={{
-                        variant: "subtitle1",
-                        fontWeight: "550",
-                      }}
+                      primaryTypographyProps={{ variant: "subtitle1" }}
                     />
                     <ListItemSecondaryAction>
                       <IconButton
                         edge="end"
-                        onClick={() => handleFavoriteToggle(item.idMeal)}
+                        onClick={() => handleFavoriteToggle(item)}
                       >
-                        {favorites[item.idMeal] ? (
+                        {isFavorite(item) ? (
                           <FavoriteIcon color="error" />
                         ) : (
                           <FavoriteBorderIcon />
@@ -84,14 +116,22 @@ export default function MealList() {
                       </IconButton>
                     </ListItemSecondaryAction>
                   </ListItem>
-                  {index < MealsData.meals.length - 1 && (
-                    <Divider variant="inset" component="li" />
-                  )}
+                  {index < meals.length - 1 && <Divider variant="inset" component="li" />}
                 </React.Fragment>
-              ))}
+              ))
+            )}
           </List>
         </Box>
       </Container>
+      <AlertSnackbar
+        open={open}
+        onClose={() => setOpen(false)}
+        message={alertMessage}
+        severity="success"
+      
+      />
     </>
   );
-}
+};
+
+export default memo(MealList);

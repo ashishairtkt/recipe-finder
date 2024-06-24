@@ -3,7 +3,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
-import InfoIcon from "@mui/icons-material/Info";
+
 import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import HomeIcon from "@mui/icons-material/Home";
@@ -13,35 +13,39 @@ const listItemsData = [
   {
     text: "Home",
     icon: <HomeIcon />,
-    onClick: () => console.log("Home clicked"),
   },
   {
     text: "Menu",
     icon: <MenuBookIcon />,
-    onClick: () => console.log("Menu clicked"),
   },
   {
     text: "My Favourites",
     icon: <FavoriteIcon />,
-    onClick: () => console.log("My Favourites clicked"),
   },
   {
     text: "Meal Generator",
     icon: <LocalDiningIcon />,
-    onClick: () => console.log("Meal Generator clicked"),
   },
   {
     text: "About Me",
     icon: <ManageAccountsIcon />,
-    onClick: () => console.log("About Me clicked"),
   },
 ];
 
-const MainListItems = ({ setActiveState }) => {
+const MainListItems = ({ activeState, setActiveState,setrefresh,refresh }) => {
   return (
     <React.Fragment>
       {listItemsData.map((item, index) => (
-        <ListItemButton key={index} onClick={() => setActiveState(item.text)}>
+        <ListItemButton
+          key={index}
+          onClick={() =>{ setActiveState(item.text) ;setrefresh(!refresh)}}
+          sx={{
+            bgcolor:
+              activeState === item.text ? "rgba(0, 0, 0, 0.2)" : "transparent",
+            color: activeState === item.text ? "black" : "",
+            pl: 3,
+          }}
+        >
           <ListItemIcon>{item.icon}</ListItemIcon>
           <ListItemText primary={item.text} />
         </ListItemButton>
@@ -49,4 +53,5 @@ const MainListItems = ({ setActiveState }) => {
     </React.Fragment>
   );
 };
+
 export default MainListItems;

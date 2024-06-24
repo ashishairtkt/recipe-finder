@@ -12,11 +12,7 @@ export const fetchMealsByCategory = async (category) => {
   return data.meals;
 };
 
-export const fetchMealById = async (id) => {
-  const response = await fetch(`${BASE_URL}/lookup.php?i=${id}`);
-  const data = await response.json();
-  return data.meals[0];
-};
+
 
 export const fetchRandomMeal = async () => {
   const response = await fetch(`${BASE_URL}/random.php`);
